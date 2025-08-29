@@ -5,8 +5,8 @@ export async function POST(request: Request) {
   try {
     const { username, password } = await request.json()
     
-    const validUsername = process.env.AUTH_USERNAME
-    const validPassword = process.env.AUTH_PASSWORD
+    const validUsername = process.env.NEXT_PUBLIC_AUTH_USERNAME
+    const validPassword = process.env.NEXT_PUBLIC_AUTH_PASSWORD
     
     if (!validUsername || !validPassword) {
       return NextResponse.json(

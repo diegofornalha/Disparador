@@ -31,6 +31,10 @@ export const sendMessage = async (
   const apikey = process.env.NEXT_PUBLIC_EVOLUTION_API;
   const url = `${baseUrl}/message/sendText/${instanceName}`;
   
+  if (!baseUrl || !apikey) {
+    throw new Error('Configuração da API Evolution ausente. Verifique o arquivo .env');
+  }
+  
   const payload = {
     number: formattedNumber,
     text: processedText,
@@ -42,8 +46,10 @@ export const sendMessage = async (
 
   console.log('📤 Enviando mensagem:', {
     url,
-    payload,
-    instanceName
+    instanceName,
+    number: formattedNumber,
+    textPreview: processedText.substring(0, 50) + '...',
+    hasApiKey: !!apikey
   });
 
   try {
@@ -56,15 +62,45 @@ export const sendMessage = async (
       body: JSON.stringify(payload)
     });
 
+    const responseText = await response.text();
+    
     if (!response.ok) {
-      const errorData = await response.text();
-      console.error('❌ Erro na resposta:', {
+      let errorDetails = '';
+      try {
+        const errorJson = JSON.parse(responseText);
+        errorDetails = errorJson.message || errorJson.error || errorJson.response?.message || responseText;
+      } catch {
+        errorDetails = responseText;
+      }
+      
+      console.error('❌ Erro detalhado da API Evolution:', {
         status: response.status,
         statusText: response.statusText,
-        errorData
+        errorDetails,
+        url,
+        instanceName,
+        number: formattedNumber
       });
-      throw new Error(`Erro ao enviar mensagem: ${response.status} - ${errorData}`);
+      
+      // Mensagem de erro mais específica baseada no status
+      let userMessage = '';
+      if (response.status === 500) {
+        userMessage = 'Erro interno da API. Verifique se a instância está conectada ao WhatsApp.';
+      } else if (response.status === 404) {
+        userMessage = `Instância "${instanceName}" não encontrada na API.`;
+      } else if (response.status === 401) {
+        userMessage = 'API Key inválida. Verifique a configuração.';
+      } else {
+        userMessage = errorDetails;
+      }
+      
+      throw new Error(`Erro ao enviar mensagem: ${response.status} - ${userMessage}`);
     }
+
+    console.log('✅ Mensagem enviada com sucesso:', {
+      number: formattedNumber,
+      instanceName
+    });
 
     return response;
   } catch (error) {

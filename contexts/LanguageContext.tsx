@@ -2,15 +2,11 @@
 
 import { createContext, useContext, useState, useCallback } from 'react'
 import ptBR from '../locales/pt-BR'
-import enUS from '../locales/en-US'
-import esES from '../locales/es-ES'
 
-type LanguageType = 'pt-BR' | 'en-US' | 'es-ES'
+type LanguageType = 'pt-BR'
 
 const translations = {
-  'pt-BR': ptBR,
-  'en-US': enUS,
-  'es-ES': esES
+  'pt-BR': ptBR
 } as const
 
 type LanguageContextType = {
