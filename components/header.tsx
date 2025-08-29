@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { LogOut, UserPlus } from 'lucide-react'
 import { logout } from '@/utils/auth'
-import { LanguageSelector } from './language-selector'
+import { BrazilFlag } from './flags'
 
 export default function Header() {
   const router = useRouter()
@@ -28,7 +28,9 @@ export default function Header() {
         <UserPlus className="h-4 w-4 mr-2" />
         Cadastrar novo número
       </Button>
-      <LanguageSelector />
+      <div className="px-2">
+        <BrazilFlag />
+      </div>
       <Button
         onClick={handleLogout}
         variant="ghost"
