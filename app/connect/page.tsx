@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2, Smartphone, RefreshCw, CheckCircle, XCircle, LogIn } from 'lucide-react'
+import { isAuthenticated } from '@/utils/auth'
 
 export default function ConnectPage() {
   const router = useRouter()
@@ -15,11 +16,18 @@ export default function ConnectPage() {
   const [qrCode, setQrCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [connectionStatus, setConnectionStatus] = useState<string>('')
-  const [newInstanceName, setNewInstanceName] = useState('')
-  const [phoneNumber, setPhoneNumber] = useState('21936182339')
+  const [newInstanceName, setNewInstanceName] = useState('Diego')
+  const [phoneNumber, setPhoneNumber] = useState('21936194871')
 
   const baseUrl = process.env.NEXT_PUBLIC_EVOLUTION_URL
   const apiKey = process.env.NEXT_PUBLIC_EVOLUTION_API
+
+  // Verificar autenticação
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/login')
+    }
+  }, [])
 
   // Buscar instâncias
   const fetchInstances = async () => {
@@ -204,7 +212,7 @@ export default function ConnectPage() {
                         id="instanceName"
                         value={newInstanceName}
                         onChange={(e) => setNewInstanceName(e.target.value)}
-                        placeholder="Ex: meu-whatsapp"
+                        placeholder="Diego"
                         className="mt-1 bg-white"
                       />
                     </div>
@@ -214,7 +222,7 @@ export default function ConnectPage() {
                         id="phone"
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
-                        placeholder="21936182339"
+                        placeholder="21936194871"
                         className="mt-1 bg-white"
                       />
                     </div>

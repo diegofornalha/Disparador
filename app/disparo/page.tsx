@@ -1,17 +1,27 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from 'next/navigation'
 import { SelecaoInstanciasComponent } from "@/components/selecao-instancias"
 import { EntradaContatosComponent } from "@/components/entrada-contatos"
 import { ComposicaoMensagemComponent } from "@/components/composicao-mensagem"
+import { isAuthenticated } from '@/utils/auth'
 import type { Contact, Instance } from "@/types"
 
 type Step = 'selecao' | 'contatos' | 'composicao'
 
 export default function DisparoPage() {
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState<Step>('selecao')
   const [selectedInstances, setSelectedInstances] = useState<Instance[]>([])
   const [contacts, setContacts] = useState<Contact[]>([])
+
+  // Verificar autenticação
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/login')
+    }
+  }, [])
 
   const handleSelecaoInstancias = (instances: Instance[]) => {
     setSelectedInstances(instances)
